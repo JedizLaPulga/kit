@@ -1,4 +1,4 @@
-# KitCrypto Module
+# CryptoKit Module
 
 Cryptographic primitives powered by Phobos `std.digest`.
 
@@ -20,7 +20,9 @@ dub build --build=release --compiler=ldc2
 ### Test
 
 ```bash
-cd source/kitCrypto/build/test
+# From kit/C directory
+dub build --build=release --compiler=ldc2
+cd source/cryptokit/build/test
 ./test
 ```
 
@@ -32,7 +34,7 @@ Expected output:
 ## Usage in C
 
 ```c
-#include <kitcrypto.h>
+#include <cryptokit.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -58,7 +60,7 @@ int main() {
 #!/bin/bash
 # From kit/C directory
 dub build --build=release --compiler=ldc2
-cd source/kitCrypto/build/test
+cd source/cryptokit/build/test
 ./test
 echo "✅ Build and test complete!"
 ```
@@ -66,12 +68,12 @@ echo "✅ Build and test complete!"
 ### Quick Compile User Code
 ```bash
 #!/bin/bash
-# Compile user program against KitCrypto
+# Compile user program against CryptoKit
 gcc myapp.c \
-  -I../../source/kitCrypto/build/include \
-  -L../../source/kitCrypto/build/lib \
-  -lkitcrypto \
-  -Wl,-rpath,../../source/kitCrypto/build/lib \
+  -I../../source/cryptokit/build/include \
+  -L../../source/cryptokit/build/lib \
+  -lcryptokit \
+  -Wl,-rpath,../../source/cryptokit/build/lib \
   -o myapp
 ./myapp
 ```
@@ -79,11 +81,11 @@ gcc myapp.c \
 ### Copy to System (Optional)
 ```bash
 #!/bin/bash
-# Install KitCrypto to system
-sudo cp build/lib/libkitcrypto.so /usr/local/lib/
-sudo cp build/include/kitcrypto.h /usr/local/include/
+# Install CryptoKit to system
+sudo cp build/lib/libcryptokit.so /usr/local/lib/
+sudo cp build/include/cryptokit.h /usr/local/include/
 sudo ldconfig
-echo "✅ KitCrypto installed to /usr/local/"
+echo "✅ CryptoKit installed to /usr/local/"
 ```
 
 ## Functions
@@ -104,12 +106,12 @@ Compute HMAC-SHA256 for authentication.
 ## Directory Structure
 
 ```
-kitCrypto/
+cryptokit/
 ├── README.md                (this file)
-├── kitcrypto.d              (D source)
+├── cryptokit.d              (D source)
 └── build/
-    ├── include/kitcrypto.h
-    ├── lib/libkitcrypto.so
+    ├── include/cryptokit.h
+    ├── lib/libcryptokit.so
     └── test/test            (runnable test)
 ```
 

@@ -1,4 +1,4 @@
-module kitCrypto.kitcrypto;
+module cryptokit.cryptokit;
 
 import std.digest.sha;
 import std.digest.hmac;

@@ -1,6 +1,6 @@
 # Module Creation Guide
 
-A complete walkthrough for creating new Kit modules. Use this guide to add modules like **kitAsync**, **kitJSON**, **kitNetwork**, etc.
+A complete walkthrough for creating new Kit modules. Use this guide to add modules like **asynckit**, **jsonkit**, **networkkit**, etc.
 
 ---
 
@@ -12,29 +12,29 @@ Each Kit module follows a **modular, self-contained design**:
 Language Layer (C or CPP)
     ↓
 C or CPP/
-    ├── source/kitXXXX/
-    │   ├── kitxxxx.d                    ← D source code
+    ├── source/XXXXKIT/
+    │   ├── xxxxkit.d                    ← D source code
     │   ├── README.md                    ← Module documentation
     │   └── build/                       ← Self-contained build output
-    │       ├── include/kitxxxx.h(pp)
-    │       ├── lib/libkitxxxx.so
+    │       ├── include/xxxxkit.h(pp)
+    │       ├── lib/libxxxxkit.so
     │       └── test/test.c(pp) + test   ← Portable tests
     │
     └── build/                           ← Central collection
-        ├── include/kitxxxx.h(pp)
-        └── lib/libkitxxxx.so
+        ├── include/xxxxkit.h(pp)
+        └── lib/libxxxxkit.so
         
         ↓ INSTALL.sh gathers these
         
 kit-dist/                               ← Distribution
-    ├── include/kitxxxx.h(pp)
-    ├── lib/libkitxxxx.so
+    ├── include/xxxxkit.h(pp)
+    ├── lib/libxxxxkit.so
     └── docs/
 ```
 
 **Key principles:**
 - Each module under 'source' is **independent** and **portable**
-- Module owns its `source/kitXXXX/build/` for development
+- Module owns its `source/XXXXKIT/build/` for development
 - Central `C/build/` or `CPP/build/` mirrors module outputs for distribution
 - Tests use **relative paths** (`../include`, `../lib`) for portability
 - **INSTALL.sh** automatically discovers and collects all modules
@@ -48,9 +48,9 @@ Here's the high-level process (detailed steps follow):
 ```bash
 # 1. Create module structure
 cd kit/C
-mkdir -p source/kitAsync
-touch source/kitAsync/kitasync.d
-touch source/kitAsync/README.md
+mkdir -p source/asynckit
+touch source/asynckit/asynckit.d
+touch source/asynckit/README.md
 
 # 2. Write D implementation
 # - Add extern(C) functions
@@ -64,16 +64,16 @@ dub build --build=release --compiler=ldc2
 # - Declare extern(C) functions
 
 # 5. Copy to module build/
-mkdir -p source/kitAsync/build/{include,lib,test}
-cp C/build/include/kitasync.h source/kitAsync/build/include/
-cp C/build/lib/libkitasync.so source/kitAsync/build/lib/
+mkdir -p source/asynckit/build/{include,lib,test}
+cp C/build/include/asynckit.h source/asynckit/build/include/
+cp C/build/lib/libasynckit.so source/asynckit/build/lib/
 
 # 6. Write test.c
 # - Use relative paths
 # - Keep <30 lines
 
 # 7. Test
-cd source/kitAsync/build/test
+cd source/asynckit/build/test
 ./test
 
 # 8. Run INSTALL.sh
@@ -84,7 +84,7 @@ bash INSTALL.sh
 
 ---
 
-## Step-by-Step: Creating kitAsync (Example)
+## Step-by-Step: Creating asynckit (Example)
 
 A complete worked example for an async task module.
 
@@ -92,15 +92,15 @@ A complete worked example for an async task module.
 
 ```bash
 cd /home/hp/Documents/github/Kit/kit/C
-mkdir -p source/kitAsync/build/{include,lib,test}
+mkdir -p source/asynckit/build/{include,lib,test}
 ```
 
 ### Step 2: Create D Source File
 
-**File:** `source/kitAsync/kitasync.d`
+**File:** `source/asynckit/asynckit.d`
 
 ```d
-module kitasync;
+module asynckit;
 
 import std.concurrency : spawn, thisTid, send, receiveOnly;
 import std.stdio : writeln;
@@ -162,7 +162,7 @@ extern (C) TaskResult kit_wait_task(TaskHandle handle) {
 
 ### Step 3: Create C Header File
 
-**File:** `source/kitAsync/build/include/kitasync.h`
+**File:** `source/asynckit/build/include/asynckit.h`
 
 ```c
 #ifndef KITASYNC_H
@@ -215,10 +215,10 @@ TaskResult kit_wait_task(TaskHandle handle);
 
 ### Step 4: Create Module README
 
-**File:** `source/kitAsync/README.md`
+**File:** `source/asynckit/README.md`
 
 ```markdown
-# KitAsync: Asynchronous Task Module
+# AsyncKit: Asynchronous Task Module
 
 Phobos-powered async task execution for C.
 
@@ -239,7 +239,7 @@ dub build --build=release --compiler=ldc2
 
 Test:
 ```bash
-cd source/kitAsync/build/test
+cd source/asynckit/build/test
 ./test
 ```
 
@@ -284,10 +284,10 @@ dub build --build=release --compiler=ldc2
 Output:
 ```
 Building kit-c 0.0.1-master...
-Compiling source/kitCrypto/kitcrypto.d ...
-Compiling source/kitAsync/kitasync.d ...
-Linking libkitcrypto.so ...
-Linking libkitasync.so ...
+Compiling source/cryptokit/cryptokit.d ...
+Compiling source/asynckit/asynckit.d ...
+Linking libcryptokit.so ...
+Linking libasynckit.so ...
 Build complete: 2 modules
 ```
 
@@ -296,19 +296,19 @@ Build complete: 2 modules
 The build produces libraries in `C/.dub/build/`. Copy them:
 
 ```bash
-# Copy kitAsync header (create if doesn't exist)
-cp source/kitAsync/build/include/kitasync.h \
-   build/include/kitasync.h
+# Copy asynckit header (create if doesn't exist)
+cp source/asynckit/build/include/asynckit.h \
+   build/include/asynckit.h
 
-# Copy kitAsync library from dub build
-find C/.dub/build -name "libkitasync.so" -exec \
-  cp {} source/kitAsync/build/lib/ \;
+# Copy asynckit library from dub build
+find C/.dub/build -name "libasynckit.so" -exec \
+  cp {} source/asynckit/build/lib/ \;
 
 # Or if using Dub with custom naming
 # (depends on your dub.json configuration)
 ```
 
-**Better approach:** Modify `dub.json` to generate libraries directly to `source/kitXXXX/build/lib/`:
+**Better approach:** Modify `dub.json` to generate libraries directly to `source/XXXXKIT/build/lib/`:
 
 ```json
 {
@@ -316,19 +316,19 @@ find C/.dub/build -name "libkitasync.so" -exec \
   "targetType": "dynamicLibrary",
   "configurations": [
     {
-      "name": "kitcrypto",
-      "mainSourceFile": "source/kitCrypto/kitcrypto.d",
-      "targetName": "kitcrypto",
+      "name": "cryptokit",
+      "mainSourceFile": "source/cryptokit/cryptokit.d",
+      "targetName": "cryptokit",
       "postBuildCommands": [
-        "cp C/.dub/build/*/libkitcrypto.so source/kitCrypto/build/lib/ || true"
+        "cp C/.dub/build/*/libcryptokit.so source/cryptokit/build/lib/ || true"
       ]
     },
     {
-      "name": "kitasync",
-      "mainSourceFile": "source/kitAsync/kitasync.d",
-      "targetName": "kitasync",
+      "name": "asynckit",
+      "mainSourceFile": "source/asynckit/asynckit.d",
+      "targetName": "asynckit",
       "postBuildCommands": [
-        "cp C/.dub/build/*/libkitasync.so source/kitAsync/build/lib/ || true"
+        "cp C/.dub/build/*/libasynckit.so source/asynckit/build/lib/ || true"
       ]
     }
   ]
@@ -337,22 +337,22 @@ find C/.dub/build -name "libkitasync.so" -exec \
 
 Then build specific module:
 ```bash
-dub build --config=kitasync --build=release --compiler=ldc2
+dub build --config=asynckit --build=release --compiler=ldc2
 ```
 
 ### Step 7: Create Test
 
-**File:** `source/kitAsync/build/test/test.c`
+**File:** `source/asynckit/build/test/test.c`
 
 Keep it simple and self-contained (< 30 lines):
 
 ```c
-#include <kitasync.h>
+#include <asynckit.h>
 #include <stdio.h>
 #include <unistd.h>
 
 int main() {
-    printf("🧪 KitAsync Module Test\n");
+    printf("🧪 AsyncKit Module Test\n");
     printf("=======================\n\n");
     
     // Create a task
@@ -364,25 +364,25 @@ int main() {
     printf("Task result: status=%d, message=%s\n", result.status, result.message);
     
     if (result.status == 0) {
-        printf("\n✅ KitAsync tests passed!\n");
+        printf("\n✅ AsyncKit tests passed!\n");
         return 0;
     } else {
-        printf("\n❌ KitAsync tests failed!\n");
+        printf("\n❌ AsyncKit tests failed!\n");
         return 1;
     }
 }
 ```
 
 **Test requirements:**
-- Use only relative paths: `#include <kitasync.h>`
-- Link with `-L../lib -lkitasync`
+- Use only relative paths: `#include <asynckit.h>`
+- Link with `-L../lib -lasynckit`
 - Use `-Wl,-rpath,../lib` for runtime linking
 - Keep output simple (emoji + message)
 - Return 0 on success, non-zero on failure
 
 ### Step 8: Create Test Build Script
 
-**File:** `source/kitAsync/build/test/build.sh`
+**File:** `source/asynckit/build/test/build.sh`
 
 ```bash
 #!/bin/bash
@@ -391,12 +391,12 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-echo "Building kitAsync test..."
+echo "Building asynckit test..."
 gcc -v \
     -I../include \
     -L../lib \
     test.c \
-    -lkitasync \
+    -lasynckit \
     -Wl,-rpath,../lib \
     -o test
 
@@ -408,12 +408,12 @@ echo "Running test..."
 
 Make it executable:
 ```bash
-chmod +x source/kitAsync/build/test/build.sh
+chmod +x source/asynckit/build/test/build.sh
 ```
 
 Run:
 ```bash
-bash source/kitAsync/build/test/build.sh
+bash source/asynckit/build/test/build.sh
 ```
 
 ### Step 9: Update Central Collection
@@ -422,8 +422,8 @@ The central `C/build/` should mirror the module build:
 
 ```bash
 # After module build, copy to central location
-cp source/kitAsync/build/include/kitasync.h build/include/
-cp source/kitAsync/build/lib/libkitasync.so build/lib/
+cp source/asynckit/build/include/asynckit.h build/include/
+cp source/asynckit/build/lib/libasynckit.so build/lib/
 ```
 
 ### Step 10: Test INSTALL.sh
@@ -441,18 +441,18 @@ Expected output:
 
 📦 Creating distribution directory...
 📋 Gathering C module headers...
-   ✓ C headers (2 file(s))      ← kitcrypto.h + kitasync.h
+   ✓ C headers (2 file(s))      ← cryptokit.h + asynckit.h
 
 📚 Gathering C module libraries...
-   ✓ C libraries (.so: 2, .a: 0) ← libkitcrypto.so + libkitasync.so
+   ✓ C libraries (.so: 2, .a: 0) ← libcryptokit.so + libasynckit.so
 
 📂 Headers in kit-dist/include/:
-   kitcrypto.h
-   kitasync.h
+   cryptokit.h
+   asynckit.h
 
 📂 Libraries in kit-dist/lib/:
-   libkitcrypto.so (18K)
-   libkitasync.so (22K)
+   libcryptokit.so (18K)
+   libasynckit.so (22K)
 
 ✅ Distribution Complete!
 ```
@@ -465,28 +465,28 @@ Expected output:
 
 Use this checklist when adding a new module:
 
-- [ ] Create `source/kitXXXX/` directory
-- [ ] Write `source/kitXXXX/kitxxxx.d` with:
+- [ ] Create `source/XXXXKIT/` directory
+- [ ] Write `source/XXXXKIT/xxxxkit.d` with:
   - [ ] Phobos imports and logic
   - [ ] C-compatible structs
   - [ ] `extern(C)` functions
-- [ ] Create `source/kitXXXX/build/{include,lib,test}/` directories
-- [ ] Create `source/kitXXXX/build/include/kitxxxx.h` with:
+- [ ] Create `source/XXXXKIT/build/{include,lib,test}/` directories
+- [ ] Create `source/XXXXKIT/build/include/xxxxkit.h` with:
   - [ ] Include guards
   - [ ] Struct definitions matching D code
   - [ ] Function declarations
   - [ ] Documentation comments
-- [ ] Create `source/kitXXXX/README.md` with:
+- [ ] Create `source/XXXXKIT/README.md` with:
   - [ ] Features overview
   - [ ] Quick start
   - [ ] API reference
   - [ ] Implementation notes
 - [ ] Update `dub.json` to build your module
 - [ ] Build: `dub build --build=release --compiler=ldc2`
-- [ ] Copy outputs to `source/kitXXXX/build/{include,lib}/`
-- [ ] Create `source/kitXXXX/build/test/test.c` (<30 lines)
-- [ ] Create `source/kitXXXX/build/test/build.sh` script
-- [ ] Test locally: `bash source/kitXXXX/build/test/build.sh`
+- [ ] Copy outputs to `source/XXXXKIT/build/{include,lib}/`
+- [ ] Create `source/XXXXKIT/build/test/test.c` (<30 lines)
+- [ ] Create `source/XXXXKIT/build/test/build.sh` script
+- [ ] Test locally: `bash source/XXXXKIT/build/test/build.sh`
 - [ ] Copy to central: `C/build/{include,lib}/`
 - [ ] Run `bash INSTALL.sh` to verify integration
 - [ ] Update `CHANGELOG.md` with new module
@@ -499,12 +499,12 @@ Use this checklist when adding a new module:
 
 **File structure:**
 ```
-source/kitXXXX/
-├── kitxxxx.d                        (50-100 lines)
+source/XXXXKIT/
+├── xxxxkit.d                        (50-100 lines)
 ├── README.md                        (50-100 lines)
 └── build/
-    ├── include/kitxxxx.h            (auto-generated/manual)
-    ├── lib/libkitxxxx.so            (compiled)
+    ├── include/xxxxkit.h            (auto-generated/manual)
+    ├── lib/libxxxxkit.so            (compiled)
     └── test/
         ├── test.c                   (20-30 lines)
         └── build.sh                 (10 lines)
@@ -512,7 +512,7 @@ source/kitXXXX/
 
 **D source template:**
 ```d
-module kitxxxx;
+module xxxxkit;
 
 import std.stdio;
 import std.string;
@@ -554,11 +554,11 @@ Result kit_do_something(const char* input);
 
 **Test template:**
 ```c
-#include <kitxxxx.h>
+#include <xxxxkit.h>
 #include <stdio.h>
 
 int main() {
-    printf("🧪 KitXXXX Test\n");
+    printf("🧪 XXXXKIT Test\n");
     Result r = kit_do_something("test");
     if (r.status == 0) {
         printf("✅ Passed\n");
@@ -575,22 +575,22 @@ int main() {
 
 Here's what you can expose from Phobos for different modules:
 
-### Crypto Module (kitCrypto) ✓ Done
+### Crypto Module (cryptokit) ✓ Done
 - `std.digest.sha` - SHA-256, SHA-512
 - `std.digest.hmac` - HMAC authentication
 - `std.digest.blake2` - Blake2 hashing
 
-### Async Module (kitAsync) - Recommended Next
+### Async Module (asynckit) - Recommended Next
 - `std.concurrency` - Task spawning, message passing
 - `core.time` - Delay/timing
 - `std.parallelism` - Parallel maps/reductions
 
-### JSON Module (kitJSON) - Popular
+### JSON Module (jsonkit) - Popular
 - `std.json` - Parse/generate JSON
 - `std.conv` - Type conversions
 - `std.range` - Processing streams
 
-### Network Module (kitNetwork) - Advanced
+### Network Module (networkkit) - Advanced
 - `std.socket` - TCP/UDP sockets
 - `std.net.curl` - HTTP requests
 - `std.socket` - DNS queries
@@ -599,22 +599,22 @@ Here's what you can expose from Phobos for different modules:
 
 ## Troubleshooting
 
-### "Cannot find libkitxxxx.so" in test
+### "Cannot find libxxxxkit.so" in test
 
 **Problem:** Test can't link to library.
 
 **Solution:** Ensure:
 1. `dub build` completed successfully
-2. `.so` file exists in `source/kitXXXX/build/lib/`
-3. Test uses `-L../lib -lkitxxxx`
+2. `.so` file exists in `source/XXXXKIT/build/lib/`
+3. Test uses `-L../lib -lxxxxkit`
 4. Test uses `-Wl,-rpath,../lib` for runtime linking
 
 ```bash
 # Debug: Check library exists
-ls -la source/kitXXXX/build/lib/
+ls -la source/XXXXKIT/build/lib/
 
 # Debug: Check linker path
-gcc -L../lib -lkitxxxx test.c -v
+gcc -L../lib -lxxxxkit test.c -v
 ```
 
 ### "Module not appearing in INSTALL.sh output"
@@ -622,8 +622,8 @@ gcc -L../lib -lkitxxxx test.c -v
 **Problem:** New module missing from distribution.
 
 **Solution:** 
-1. Verify `C/build/include/kitxxxx.h` exists
-2. Verify `C/build/lib/libkitxxxx.so` exists
+1. Verify `C/build/include/xxxxkit.h` exists
+2. Verify `C/build/lib/libxxxxkit.so` exists
 3. Run `bash INSTALL.sh` again
 4. Check `kit-dist/` output
 
@@ -662,7 +662,7 @@ extern (C) Result kit_compute(const ubyte* data, size_t length) {
 
 ```bash
 # ✓ Good: Relative paths, portable
-gcc test.c -I../include -L../lib -lkitxxx -Wl,-rpath,../lib
+gcc test.c -I../include -L../lib -lxxxxkit -Wl,-rpath,../lib
 
 # ✗ Bad: Absolute paths, not portable
 gcc test.c -I/home/user/kit/include -L/home/user/kit/lib
@@ -697,11 +697,11 @@ Result kit_hash(const unsigned char* data, size_t length);
 
 ```bash
 # 1. Build your module
-dub build --config=kitasync --build=release --compiler=ldc2
+dub build --config=asynckit --build=release --compiler=ldc2
 
 # 2. Copy to central collection
-cp source/kitAsync/build/include/kitasync.h build/include/
-cp source/kitAsync/build/lib/libkitasync.so build/lib/
+cp source/asynckit/build/include/asynckit.h build/include/
+cp source/asynckit/build/lib/libasynckit.so build/lib/
 
 # 3. Run INSTALL.sh (automatic discovery!)
 bash INSTALL.sh
@@ -715,9 +715,9 @@ That's it! INSTALL.sh will find your module automatically.
 
 Ready to create more modules? Here are good candidates:
 
-1. **kitAsync** - Task spawning, delays, message passing
-2. **kitJSON** - JSON parsing and generation
-3. **kitNetwork** - TCP/UDP sockets, HTTP
+1. **asynckit** - Task spawning, delays, message passing
+2. **jsonkit** - JSON parsing and generation
+3. **networkkit** - TCP/UDP sockets, HTTP
 4. **kitRandom** - Cryptographically secure random numbers
 5. **kitRegex** - Pattern matching using Phobos regex
 6. **kitCompress** - Zlib/LZMA compression via Phobos
@@ -729,7 +729,7 @@ Each follows the same pattern—just pick Phobos features and expose them via ex
 ## Questions?
 
 Refer back to these files for examples:
-- **Working module:** `C/source/kitCrypto/`
+- **Working module:** `C/source/cryptokit/`
 - **Build script:** `C/INSTALL.sh`
 - **Full architecture:** `DISTRIBUTION_WORKFLOW.md`
 

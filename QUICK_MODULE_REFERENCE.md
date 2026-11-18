@@ -7,11 +7,11 @@
 ## 30-Second Overview
 
 ```
-Create source/kitXXXX/
+Create source/XXXXKIT/
     ↓
-Write kitxxxx.d (D source with Phobos)
+Write xxxxkit.d (D source with Phobos)
     ↓
-Create kitxxxx.h (C header)
+Create xxxxkit.h (C header)
     ↓
 Build: dub build --build=release --compiler=ldc2
     ↓
@@ -27,14 +27,14 @@ bash INSTALL.sh (automatic discovery!)
 ## Directory Structure Checklist
 
 ```
-✓ source/kitXXXX/
-  ✓ kitxxxx.d                    (D source, 50-100 lines)
+✓ source/XXXXKIT/
+  ✓ xxxxkit.d                    (D source, 50-100 lines)
   ✓ README.md                    (Module docs)
   ✓ build/
     ✓ include/
-      ✓ kitxxxx.h                (C header)
+      ✓ xxxxkit.h                (C header)
     ✓ lib/
-      ✓ libkitxxxx.so            (Compiled library)
+      ✓ libxxxxkit.so            (Compiled library)
     ✓ test/
       ✓ test.c                   (Test, <30 lines)
       ✓ build.sh                 (Build script)
@@ -43,10 +43,10 @@ bash INSTALL.sh (automatic discovery!)
 
 ---
 
-## D Source Template (kitxxxx.d)
+## D Source Template (xxxxkit.d)
 
 ```d
-module kitxxxx;
+module xxxxkit;
 
 import std.stdio;        // Phobos features
 import std.concurrency;
@@ -73,11 +73,11 @@ extern (C) Result kit_do_something(const char* input) {
 
 ---
 
-## C Header Template (kitxxxx.h)
+## C Header Template (xxxxkit.h)
 
 ```c
-#ifndef KITXXXX_H
-#define KITXXXX_H
+#ifndef XXXXKIT_H
+#define XXXXKIT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -93,7 +93,7 @@ Result kit_do_something(const char* input);
 #ifdef __cplusplus
 }
 #endif
-#endif // KITXXXX_H
+#endif // XXXXKIT_H
 ```
 
 **Key rules:**
@@ -106,11 +106,11 @@ Result kit_do_something(const char* input);
 ## Test Template (test.c)
 
 ```c
-#include <kitxxxx.h>
+#include <xxxxkit.h>
 #include <stdio.h>
 
 int main() {
-    printf("🧪 KitXXXX Test\n");
+    printf("🧪 XXXXKIT Test\n");
     
     Result r = kit_do_something("test");
     if (r.status == 0) {
@@ -126,7 +126,7 @@ int main() {
 - Under 30 lines
 - Use emoji for visibility
 - Return 0 on success
-- Use relative paths: `#include <kitxxxx.h>`
+- Use relative paths: `#include <xxxxkit.h>`
 
 ---
 
@@ -139,12 +139,12 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-echo "Building kitXXXX test..."
+echo "Building XXXXKIT test..."
 gcc \
     -I../include \
     -L../lib \
     test.c \
-    -lkitxxxx \
+    -lxxxxkit \
     -Wl,-rpath,../lib \
     -o test
 
@@ -154,7 +154,7 @@ echo "✓ Test built successfully"
 
 **Key rules:**
 - `-I../include` for relative header path
-- `-L../lib -lkitxxxx` for library linking
+- `-L../lib -lxxxxkit` for library linking
 - `-Wl,-rpath,../lib` for runtime linking
 - `set -e` to fail on error
 
@@ -164,18 +164,18 @@ echo "✓ Test built successfully"
 
 ```bash
 # 1. Create module
-mkdir -p kit/C/source/kitXXXX/build/{include,lib,test}
+mkdir -p kit/C/source/XXXXKIT/build/{include,lib,test}
 
 # 2. Build module
 cd kit/C
 dub build --build=release --compiler=ldc2
 
 # 3. Copy to central collection
-cp source/kitXXXX/build/include/kitxxxx.h build/include/
-cp source/kitXXXX/build/lib/libkitxxxx.so build/lib/
+cp source/XXXXKIT/build/include/xxxxkit.h build/include/
+cp source/XXXXKIT/build/lib/libxxxxkit.so build/lib/
 
 # 4. Build test
-bash source/kitXXXX/build/test/build.sh
+bash source/XXXXKIT/build/test/build.sh
 
 # 5. Collect distribution
 bash INSTALL.sh
@@ -208,7 +208,7 @@ ls -la kit-dist/lib/
 
 | Problem | Solution |
 |---------|----------|
-| `.so` not found | Check `source/kitXXXX/build/lib/` exists and has file |
+| `.so` not found | Check `source/XXXXKIT/build/lib/` exists and has file |
 | Test won't link | Add `-Wl,-rpath,../lib` to gcc command |
 | dub build fails | Run `ldc2 --version`, ensure v1.41+, update if needed |
 | Module missing from kit-dist | Verify `C/build/include/` and `C/build/lib/` have files |
@@ -223,36 +223,36 @@ ls -la kit-dist/lib/
 cd /path/to/kit/C
 
 # 1. Create structure
-mkdir -p source/kitXXXX/build/{include,lib,test}
+mkdir -p source/XXXXKIT/build/{include,lib,test}
 
-# 2. Create kitxxxx.d (paste D source template above)
-# 3. Create build include/kitxxxx.h (paste C header template)
+# 2. Create xxxxkit.d (paste D source template above)
+# 3. Create build include/xxxxkit.h (paste C header template)
 # 4. Build
 dub build --build=release --compiler=ldc2
 
 # 5. Copy library
-cp source/kitXXXX/build/lib/libkitxxxx.so \
-   C/build/lib/libkitxxxx.so 2>/dev/null || \
-find .dub -name "libkitxxxx.so" -exec cp {} source/kitXXXX/build/lib/ \;
+cp source/XXXXKIT/build/lib/libxxxxkit.so \
+   C/build/lib/libxxxxkit.so 2>/dev/null || \
+find .dub -name "libxxxxkit.so" -exec cp {} source/XXXXKIT/build/lib/ \;
 
 # 6. Create test.c (paste test template)
 # 7. Create build.sh (paste build script template)
-chmod +x source/kitXXXX/build/test/build.sh
+chmod +x source/XXXXKIT/build/test/build.sh
 
 # 8. Test locally
-bash source/kitXXXX/build/test/build.sh
+bash source/XXXXKIT/build/test/build.sh
 
 # 9. Copy to central
-cp source/kitXXXX/build/include/kitxxxx.h build/include/
-cp source/kitXXXX/build/lib/libkitxxxx.so build/lib/
+cp source/XXXXKIT/build/include/xxxxkit.h build/include/
+cp source/XXXXKIT/build/lib/libxxxxkit.so build/lib/
 
 # 10. Distribute
 cd ../..
 bash INSTALL.sh
 
 # 11. Verify
-ls -la kit-dist/include/kitxxxx.h
-ls -la kit-dist/lib/libkitxxxx.so
+ls -la kit-dist/include/xxxxkit.h
+ls -la kit-dist/lib/libxxxxkit.so
 ```
 
 ---
@@ -262,7 +262,7 @@ ls -la kit-dist/lib/libkitxxxx.so
 Before considering module complete:
 
 - [ ] D source compiles with `dub build --build=release`
-- [ ] `.so` file exists in `source/kitXXXX/build/lib/`
+- [ ] `.so` file exists in `source/XXXXKIT/build/lib/`
 - [ ] C header matches D structs exactly
 - [ ] Test compiles with relative paths
 - [ ] Test runs and shows ✅ or ❌
@@ -286,13 +286,13 @@ bash INSTALL.sh              # Automatic pickup
 **📦 Portable test:**
 ```bash
 # Move module anywhere, test still works
-mv C/source/kitXXXX ~/temp/
-cd ~/temp/kitXXXX/build/test
+mv C/source/XXXXKIT ~/temp/
+cd ~/temp/XXXXKIT/build/test
 ./build.sh   # Still works (relative paths)
 ```
 
 **🚀 Scaling:**
-- Add kitAsync, kitJSON, kitNetwork in parallel
+- Add asynckit, jsonkit, networkkit in parallel
 - Each is independent
 - INSTALL.sh finds them all automatically
 - No script changes needed!
@@ -319,7 +319,7 @@ cd ~/temp/kitXXXX/build/test
 - **Full guide:** `MODULE_CREATION_GUIDE.md`
 - **Architecture:** `DISTRIBUTION_WORKFLOW.md`
 - **Installation:** `INSTALL_GUIDE.md`
-- **Working example:** `C/source/kitCrypto/`
+- **Working example:** `C/source/cryptokit/`
 - **Build script:** `C/INSTALL.sh`
 
 ---

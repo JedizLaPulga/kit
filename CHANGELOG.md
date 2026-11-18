@@ -6,7 +6,7 @@ All notable changes to Kit are documented here. Format based on [Keep a Changelo
 
 ## [0.1.0-alpha] - 2026
 
-### Foundation Release: Kit-C with KitCrypto Module
+### Foundation Release: Kit-C with CryptoKit Module
 
 Established the foundational architecture for Kit: a modular, Phobos-powered cryptographic library framework for C/C++ FFI bindings using D and LDC2.
 
@@ -16,9 +16,9 @@ Established the foundational architecture for Kit: a modular, Phobos-powered cry
 - Modular project structure with self-contained build directories
 - Hybrid architecture: per-module builds + central collection
 - Automated `INSTALL.sh` collection script with 4 installation options
-- Support for multiple independent modules (design complete, KitCrypto implemented)
+- Support for multiple independent modules (design complete, CryptoKit implemented)
 
-**KitCrypto Module** (Cryptographic Functions)
+**CryptoKit Module** (Cryptographic Functions)
 - **SHA-256 Hashing** via Phobos `std.digest.sha`
   - Function: `kit_sha256(const ubyte* data, size_t length) → SHA256Hash`
   - Secure hash computation for data integrity
@@ -31,13 +31,13 @@ Established the foundational architecture for Kit: a modular, Phobos-powered cry
   - Phobos foundation with security-first design
 
 - C FFI Bindings (extern(C))
-  - Portable `kitcrypto.h` header with clean C API
+  - Portable `cryptokit.h` header with clean C API
   - Type mappings: D `ubyte` ↔ C `unsigned char` (automatic via LDC2)
   - Struct definitions: `SHA256Hash` (32-byte hash), `HMACResult` (32-byte MAC)
-  - Compiled shared library: `libkitcrypto.so`
+  - Compiled shared library: `libcryptokit.so`
 
 **Testing & Quality**
-- Self-contained test suite: `source/kitCrypto/build/test/test.c` (27 lines)
+- Self-contained test suite: `source/cryptokit/build/test/test.c` (27 lines)
 - Verified SHA-256 output: `b67d1b3ab0d839eb8bc1156b8717bb441c897fcab323374e2ae530a40632feba`
 - Verified HMAC output: `1c061a9f9652e803b8ca3fc972e023f8d43136380e7542d829e7980deacd6b94`
 - Tests use relative paths for portability
@@ -48,7 +48,7 @@ Established the foundational architecture for Kit: a modular, Phobos-powered cry
 - **Installation Guide** (`INSTALL_GUIDE.md`) - 4 installation methods, CI/CD integration
 - **Architecture Guide** (`DISTRIBUTION_WORKFLOW.md`) - Detailed workflow and design decisions
 - **Module README** (`C/README.md`) - C-specific features and quickstart
-- **KitCrypto README** (`C/source/kitCrypto/README.md`) - Module documentation with example scripts
+- **CryptoKit README** (`C/source/cryptokit/README.md`) - Module documentation with example scripts
 - **Build Helpers** - 3 scripts for quick build/compile/install tasks
 - **This CHANGELOG** - Version history and tracking
 
@@ -61,23 +61,23 @@ Established the foundational architecture for Kit: a modular, Phobos-powered cry
 #### Technical Details
 
 **Naming Convention**
-- Header file name matches library name: `kitcrypto.h` ↔ `libkitcrypto.so`
+- Header file name matches library name: `cryptokit.h` ↔ `libcryptokit.so`
 - Professional FFI design for consistency and discoverability
 
 **Directory Structure**
 ```
 kit/C/
-├── source/kitCrypto/
-│   ├── kitcrypto.d                  ← D source (45 lines)
+├── source/cryptokit/
+│   ├── cryptokit.d                  ← D source (45 lines)
 │   ├── README.md                    ← Module docs
 │   └── build/                       ← Self-contained builds
-│       ├── include/kitcrypto.h
-│       ├── lib/libkitcrypto.so
+│       ├── include/cryptokit.h
+│       ├── lib/libcryptokit.so
 │       └── test/test.c + test
 │
 ├── build/                           ← Central collection
-│   ├── include/kitcrypto.h
-│   └── lib/libkitcrypto.so
+│   ├── include/cryptokit.h
+│   └── lib/libcryptokit.so
 │
 ├── INSTALL.sh                       ← Automation
 ├── dub.json                         ← Build config
@@ -119,17 +119,17 @@ kit/C/
 
 ## Development Timeline
 
-### Session: Foundation & KitCrypto Setup
+### Session: Foundation & CryptoKit Setup
 
 **Phase 1: Architecture Design**
 - Defined dual-build strategy (modular + centralized)
 - Created INSTALL.sh automation
 - Designed naming conventions and directory structure
 
-**Phase 2: KitCrypto Implementation**
-- Wrote `kitcrypto.d` with Phobos crypto functions (45 lines)
+**Phase 2: CryptoKit Implementation**
+- Wrote `cryptokit.d` with Phobos crypto functions (45 lines)
 - Generated C header with extern(C) declarations
-- Compiled to `libkitcrypto.so` with LDC2
+- Compiled to `libcryptokit.so` with LDC2
 
 **Phase 3: Testing & Verification**
 - Created `test.c` test suite (27 lines)
@@ -155,7 +155,7 @@ kit/C/
 
 | Version | Status | Date | Features |
 |---------|--------|------|----------|
-| 0.1.0-alpha | Active | 2024 | KitCrypto with SHA-256, HMAC-SHA256 |
+| 0.1.0-alpha | Active | 2024 | CryptoKit with SHA-256, HMAC-SHA256 |
 | 0.2.0 (Planned) | - | - | Additional crypto functions |
 | 0.3.0 (Planned) | - | - | C++ bindings |
 | 1.0.0 (Planned) | - | - | Full feature set, stability |

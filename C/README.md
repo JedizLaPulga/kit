@@ -7,10 +7,10 @@ High-performance cryptographic library using **Phobos** and **D Language**, comp
 Kit-C provides battle-tested cryptographic functions via Phobos `std.digest`, exposed as clean C FFI bindings. No external dependencies—everything is built-in and optimized.
 
 ```
-D Source (kitcrypto.d)
+D Source (cryptokit.d)
     ↓ LDC2 Compiler
     ↓
-libkitcrypto.so + kitcrypto.h
+libcryptokit.so + cryptokit.h
     ↓
 Use from C programs
 ```
@@ -35,17 +35,17 @@ Use from C programs
 ```
 kit/C/
 ├── source/
-│   └── kitCrypto/
+│   └── cryptokit/
 │       ├── README.md                    ← Module documentation
-│       ├── kitcrypto.d                  ← D source code
+│       ├── cryptokit.d                  ← D source code
 │       └── build/
-│           ├── include/kitcrypto.h
-│           ├── lib/libkitcrypto.so
+│           ├── include/cryptokit.h
+│           ├── lib/libcryptokit.so
 │           └── test/test                ✓ Verified working
 │
 ├── build/                               ← Central collection
-│   ├── include/kitcrypto.h
-│   └── lib/libkitcrypto.so
+│   ├── include/cryptokit.h
+│   └── lib/libcryptokit.so
 │
 ├── dub.json                             ← Build configuration
 ├── INSTALL.sh                           ← Collection script (at kit/ root)
@@ -65,19 +65,19 @@ dub build --build=release --compiler=ldc2
 ### Test
 
 ```bash
-cd source/kitCrypto/build/test
+cd source/cryptokit/build/test
 ./test
 ```
 
 **Expected output:**
 ```
-🧪 KitCrypto Module Test
+🧪 CryptoKit Module Test
 ========================
 
 SHA-256: b67d1b3ab0d839eb8bc1156b8717bb441c897fcab323374e2ae530a40632feba
 HMAC: 1c061a9f9652e803b8ca3fc972e023f8d43136380e7542d829e7980deacd6b94
 
-✅ KitCrypto tests passed!
+✅ CryptoKit tests passed!
 ```
 
 ## Usage in C
@@ -85,7 +85,7 @@ HMAC: 1c061a9f9652e803b8ca3fc972e023f8d43136380e7542d829e7980deacd6b94
 ### Simple Example
 
 ```c
-#include <kitcrypto.h>
+#include <cryptokit.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -109,10 +109,10 @@ int main() {
 
 ```bash
 gcc myapp.c \
-  -I./source/kitCrypto/build/include \
-  -L./source/kitCrypto/build/lib \
-  -lkitcrypto \
-  -Wl,-rpath,./source/kitCrypto/build/lib \
+  -I./source/cryptokit/build/include \
+  -L./source/cryptokit/build/lib \
+  -lcryptokit \
+  -Wl,-rpath,./source/cryptokit/build/lib \
   -o myapp
 
 ./myapp
@@ -120,19 +120,19 @@ gcc myapp.c \
 
 ## Modules
 
-### kitCrypto
+### CryptoKit
 
 Cryptographic primitives via Phobos `std.digest`.
 
-- **Location:** `source/kitCrypto/`
-- **Header:** `build/include/kitcrypto.h`
-- **Library:** `build/lib/libkitcrypto.so`
+- **Location:** `source/cryptokit/`
+- **Header:** `build/include/cryptokit.h`
+- **Library:** `build/lib/libcryptokit.so`
 - **Functions:**
   - `kit_sha256()` - SHA-256 hashing
   - `kit_hmac_sha256()` - HMAC authentication
 - **Status:** ✅ Fully functional, tested
 
-See [kitCrypto/README.md](./source/kitCrypto/README.md) for detailed documentation.
+See [CryptoKit/README.md](./source/cryptokit/README.md) for detailed documentation.
 
 ## Architecture
 
@@ -141,7 +141,7 @@ See [kitCrypto/README.md](./source/kitCrypto/README.md) for detailed documentati
 Each module is **self-contained** with its own build output:
 
 ```
-source/kitCrypto/build/
+source/cryptokit/build/
   ├── include/     ← Headers for this module
   ├── lib/         ← Libraries for this module
   └── test/        ← Tests for this module
@@ -160,8 +160,8 @@ All module outputs collected to `build/` for easy discovery:
 ```bash
 # All outputs at one level
 kit/C/build/
-  ├── include/kitcrypto.h
-  └── lib/libkitcrypto.so
+  ├── include/cryptokit.h
+  └── lib/libcryptokit.so
 ```
 
 **Used by:**
@@ -174,10 +174,10 @@ kit/C/build/
 ### Option 1: Local Development
 
 ```bash
-# Already available in source/kitCrypto/build/
-gcc myapp.c -I./source/kitCrypto/build/include \
-            -L./source/kitCrypto/build/lib \
-            -lkitcrypto -o myapp
+# Already available in source/cryptokit/build/
+gcc myapp.c -I./source/cryptokit/build/include \
+            -L./source/cryptokit/build/lib \
+            -lcryptokit -o myapp
 ```
 
 ### Option 2: System Installation
@@ -191,7 +191,7 @@ sudo cp -r kit-dist/lib/* /usr/local/lib/
 sudo ldconfig
 
 # Then use anywhere
-gcc myapp.c -lkitcrypto -o myapp
+gcc myapp.c -lcryptokit -o myapp
 ```
 
 ### Option 3: Custom Location
@@ -204,7 +204,7 @@ cp -r kit-dist /opt/kit-libraries
 export LD_LIBRARY_PATH=/opt/kit-libraries/lib:$LD_LIBRARY_PATH
 export CPATH=/opt/kit-libraries/include:$CPATH
 
-gcc myapp.c -lkitcrypto -o myapp
+gcc myapp.c -lcryptokit -o myapp
 ```
 
 ## Building
@@ -248,7 +248,7 @@ dub build --build=release --compiler=ldc2
 ### Run Module Tests
 
 ```bash
-cd source/kitCrypto/build/test
+cd source/cryptokit/build/test
 ./test
 ```
 
@@ -256,9 +256,9 @@ cd source/kitCrypto/build/test
 
 ```bash
 # Compile with debug symbols
-gcc -g myapp.c -I./source/kitCrypto/build/include \
-            -L./source/kitCrypto/build/lib \
-            -lkitcrypto -o myapp_debug
+gcc -g myapp.c -I./source/cryptokit/build/include \
+            -L./source/cryptokit/build/lib \
+            -lcryptokit -o myapp_debug
 
 # Run with debugger
 gdb ./myapp_debug
@@ -266,14 +266,14 @@ gdb ./myapp_debug
 
 ## Troubleshooting
 
-### "libkitcrypto.so: cannot open shared object file"
+### "libcryptokit.so: cannot open shared object file"
 
 **Solution:** Use `-Wl,-rpath` when linking:
 
 ```bash
-gcc myapp.c -L./source/kitCrypto/build/lib \
-            -lkitcrypto \
-            -Wl,-rpath,./source/kitCrypto/build/lib \
+gcc myapp.c -L./source/cryptokit/build/lib \
+            -lcryptokit \
+            -Wl,-rpath,./source/cryptokit/build/lib \
             -o myapp
 ```
 

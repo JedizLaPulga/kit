@@ -1,5 +1,5 @@
-#ifndef KITCRYPTO_H
-#define KITCRYPTO_H
+#ifndef CRYPTOKIT_H
+#define CRYPTOKIT_H
 
 #include <stddef.h>
 
