@@ -1,9 +1,16 @@
 {
-	"authors": [
-		"JedizLaPulga"
-	],
-	"copyright": "Copyright © 2026, JedizLaPulga",
-	"description": "The Kit Library - C version",
+	"name": "kit-c",
+	"description": "Kit Library - C Bindings",
 	"license": "MIT",
-	"name": "c"
+	"authors": ["JedizLaPulga"],
+	"copyright": "Copyright © 2026, JedizLaPulga",
+	
+	"targetType": "dynamicLibrary",
+	"targetName": "kit",
+	"platforms": ["linux"],
+	"compiler": "ldc2"
 }
+
+
+
+

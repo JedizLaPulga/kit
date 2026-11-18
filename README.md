@@ -544,6 +544,10 @@ Each subdirectory contains detailed documentation:
 
 - **[C Library Documentation](./C/README.md)** - C-specific binding patterns and examples
 - **[C++ Library Documentation](./CPP/README.md)** - C++ interop best practices
+- **[Module Creation Guide](./MODULE_CREATION_GUIDE.md)** - How to create new Kit modules (kitAsync, kitJSON, etc.)
+- **[Installation & Distribution](./INSTALL_GUIDE.md)** - 4 installation methods and CI/CD integration
+- **[Architecture Workflow](./DISTRIBUTION_WORKFLOW.md)** - Design decisions and module organization
+- **[Changelog](./CHANGELOG.md)** - Version history and release notes
 
 ---
 

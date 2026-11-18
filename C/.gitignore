@@ -13,3 +13,11 @@ c-test-*
 *.o
 *.obj
 *.lst
+
+# Build outputs
+build/
+*.so
+*.a
+*.dylib
+*.dll
+
