@@ -1,9 +1,13 @@
 {
-	"authors": [
-		"jedizlpulga"
-	],
-	"copyright": "Copyright © 2026, jedizlpulga",
-	"description": "The Kit Library- Cpp",
+	"authors": ["jedizlapulga"],
+	"copyright": "Copyright © 2026, jedizlapulga",
+	"description": "Kit Library - C++ Bindings (Static Phobos)",
 	"license": "MIT",
-	"name": "cpp"
+	"name": "cpp",
+	"targetType": "dynamicLibrary",
+	"targetName": "cryptokit++",
+	"dflags": ["-link-defaultlib-shared=false"],
+	"lflags": ["-static-libphobos"],
+	"platforms": ["linux"],
+	"compiler": "ldc2"
 }

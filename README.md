@@ -146,17 +146,21 @@ bash INSTALL.sh
 
 ### ✅ CryptoKit (Cryptography) - Working Module
 
-Cryptographic primitives powered by Phobos `std.digest`.
+Cryptographic primitives powered by Phobos `std.digest`, available in both **C** and **C++**.
 
 **Features:**
 - SHA-256 hashing
 - HMAC-SHA256 message authentication
 - Timing-attack resistant constant-time operations
 - Phobos-based, battle-tested algorithms
+- Streaming support for large data processing
+- RAII semantics in C++ version
 
-**Location:** `C/source/cryptokit/`
+**Available for:**
+- **C** (`extern(C)`) - Function-based API
+- **C++** (`extern(C++)`) - ABI-compatible, opaque pointer classes with value types
 
-**Usage Example:**
+**C Usage Example:**
 ```c
 #include <cryptokit.h>
 
@@ -167,7 +171,30 @@ SHA256Hash hash = kit_sha256(data, length);
 HMACResult hmac = kit_hmac_sha256(data, data_len, key, key_len);
 ```
 
-**More info:** [CryptoKit README](./C/source/cryptokit/README.md)
+**C++ Usage Example:**
+```cpp
+#include "cryptokitpp.hpp"
+
+using namespace kit;
+
+// One-shot hash
+SHA256Hash hash = kit_sha256("hello", 5);
+std::string hex = hash.toHexString();
+
+// Streaming hash
+SHA256Hasher* hasher = kit_create_sha256_hasher();
+kit_sha256_hasher_update(hasher, "part1", 5);
+kit_sha256_hasher_update(hasher, "part2", 5);
+SHA256Hash result = kit_sha256_hasher_finish(hasher);
+```
+
+**Location:** 
+- C: `C/source/cryptokit/`
+- C++: `CPP/source/cryptokit/`
+
+**More info:** 
+- [CryptoKit C README](./C/source/cryptokit/README.md)
+- [CryptoKit C++ README](./CPP/source/cryptokit/README.md)
 
 ---
 
@@ -177,7 +204,7 @@ The following modules are planned and follow the new `XXXXkit` naming:
 
 | Module | Purpose | Status |
 |--------|---------|--------|
-| **cryptokit** | Cryptographic primitives (SHA-256, HMAC) | ✅ **Working** |
+| **cryptokit** | Cryptographic primitives (SHA-256, HMAC) | ✅ **Working** (C & C++) |
 | **asynckit** | Async task scheduling, concurrency primitives | 📋 Planned |
 | **jsonkit** | JSON parsing and generation | 📋 Planned |
 | **networkkit** | TCP/UDP sockets, HTTP client/server | 📋 Planned |
